@@ -1,38 +1,35 @@
 <?php
 $_xhprof = array();
 
+if(file_exists(__DIR__."/../_ss_environment.php")) include(__DIR__."/../_ss_environment.php");
+else if(file_exists(__DIR__."/../../_ss_environment.php")) include(__DIR__."/../../_ss_environment.php");
+else if(file_exists(__DIR__."/../../../_ss_environment.php")) include(__DIR__."/../../../_ss_environment.php");
+else throw new Exception("Can't find _ss_environment.php. This copy of XHProf expects SilverStripe sprinkles in your dev environment.");
+
+if(!defined('SS_DATABASE_USERNAME')) throw new Exception("Please set SS_DATABASE_USERNAME in your _ss_environment.php");
+if(!defined('SS_DATABASE_PASSWORD')) throw new Exception("Please set SS_DATABASE_USERNAME in your _ss_environment.php");
+
 // Change these:
 $_xhprof['dbtype'] = 'mysql'; // Only relevant for PDO
-$_xhprof['dbhost'] = 'localhost';
-$_xhprof['dbuser'] = 'root';
-$_xhprof['dbpass'] = 'password';
+$_xhprof['dbhost'] = defined('SS_DATABASE_SERVER') ? SS_DATABASE_SERVER : 'localhost';
+$_xhprof['dbuser'] = SS_DATABASE_USERNAME;
+$_xhprof['dbpass'] = SS_DATABASE_PASSWORD;
 $_xhprof['dbname'] = 'xhprof';
 $_xhprof['dbadapter'] = 'Pdo';
 $_xhprof['servername'] = 'myserver';
 $_xhprof['namespace'] = 'myapp';
-$_xhprof['url'] = 'http://url/to/xhprof/xhprof_html';
+$_xhprof['url'] = 'http://localhost/xhprof/xhprof_html';
+
+$_xhprof['dot_binary']  = file_exists('/usr/local/bin/dot') ? '/usr/local/bin/dot' : '/usr/bin/dot';
+$_xhprof['dot_tempdir'] = sys_get_temp_dir();
+$_xhprof['dot_errfile'] = $_xhprof['dot_tempdir'] . 'xh_dot.err';
+
 /*
  * MySQL/MySQLi/PDO ONLY
  * Switch to JSON for better performance and support for larger profiler data sets.
  * WARNING: Will break with existing profile data, you will need to TRUNCATE the profile data table.
  */
 $_xhprof['serializer'] = 'php'; 
-
-//Uncomment one of these, platform dependent. You may need to tune for your specific environment, but they're worth a try
-
-//These are good for Windows
-/*
-$_xhprof['dot_binary']  = 'C:\\Programme\\Graphviz\\bin\\dot.exe';
-$_xhprof['dot_tempdir'] = 'C:\\WINDOWS\\Temp';
-$_xhprof['dot_errfile'] = 'C:\\WINDOWS\\Temp\\xh_dot.err';
-*/
-
-//These are good for linux and its derivatives.
-/*
-$_xhprof['dot_binary']  = '/usr/bin/dot';
-$_xhprof['dot_tempdir'] = '/tmp';
-$_xhprof['dot_errfile'] = '/tmp/xh_dot.err';
-*/
 
 $ignoreURLs = array();
 
